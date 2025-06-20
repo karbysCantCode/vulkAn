@@ -1,9 +1,19 @@
-#include <iostream>
+#include "first_app.hpp"
 
-int main()
-{
-    int te;
-    std::cout << "hello!" << std::endl;
-    std::cin >> te;
-    return 0;
+// std
+#include <cstdlib>
+#include <iostream>
+#include <stdexcept>
+
+int main() {
+    lvk::FirstApp app;
+
+    try {
+        app.run();
+    } catch (const std::exception &e) {
+        std::cerr << e.what() << '\n';
+        return EXIT_FAILURE;
+    }
+
+    return EXIT_SUCCESS;
 }
