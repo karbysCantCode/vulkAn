@@ -90,7 +90,7 @@ VkResult LvkSwapChain::submitCommandBuffers(
   submitInfo.commandBufferCount = 1;
   submitInfo.pCommandBuffers = buffers;
 
-  VkSemaphore signalSemaphores[] = {renderFinishedSemaphores[currentFrame]};
+  VkSemaphore signalSemaphores[] = {renderFinishedSemaphores[*imageIndex]};
   submitInfo.signalSemaphoreCount = 1;
   submitInfo.pSignalSemaphores = signalSemaphores;
 
@@ -336,9 +336,9 @@ void LvkSwapChain::createDepthResources() {
 }
 
 void LvkSwapChain::createSyncObjects() {
-  imageAvailableSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
-  renderFinishedSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
-  inFlightFences.resize(MAX_FRAMES_IN_FLIGHT);
+  imageAvailableSemaphores.resize(imageCount());
+  renderFinishedSemaphores.resize(imageCount());
+  inFlightFences.resize(imageCount());
   imagesInFlight.resize(imageCount(), VK_NULL_HANDLE);
 
   VkSemaphoreCreateInfo semaphoreInfo = {};
@@ -348,7 +348,7 @@ void LvkSwapChain::createSyncObjects() {
   fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
   fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
 
-  for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
+  for (size_t i = 0; i < imageCount(); i++) {
     if (vkCreateSemaphore(device.device(), &semaphoreInfo, nullptr, &imageAvailableSemaphores[i]) !=
             VK_SUCCESS ||
         vkCreateSemaphore(device.device(), &semaphoreInfo, nullptr, &renderFinishedSemaphores[i]) !=
